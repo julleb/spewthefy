@@ -1,0 +1,25 @@
+{
+  "name": "spewthefy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julleb/spewthefy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julleb/spewthefy/issues"
+  },
+  "homepage": "https://github.com/julleb/spewthefy#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "youtube-audio-stream": "^0.3.41"
+  }
+}
