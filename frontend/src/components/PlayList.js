@@ -15,6 +15,7 @@ export function PlayList() {
 
     function playUrl(url) {
         setCurrentPlayingUrl(url);
+        
     }
 
 
