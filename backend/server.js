@@ -15,10 +15,17 @@ app.get('/audio', function (req, res) {
     if(!youtubeUrl) {
         youtubeUrl = url;
     }
-    if(!youtubeUrl.startsWith("https://www.youtube.com")) {
+    console.log(youtubeUrl);
+    const url = new URL(youtubeUrl);
+    console.log(url.hostname);
+    if(url.hostname !== "www.youtube.com") {
         res.status(500).send("Bad url");
     }
-    youtube_streamer(youtubeUrl).pipe(res);
+    try {
+        youtube_streamer(youtubeUrl).pipe(res);
+    }catch(err) {
+        res.status(500).send("Failed to stream. " + err);
+    }
  })
 
 
