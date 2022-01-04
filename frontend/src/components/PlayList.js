@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AudioPlayer } from './AudioPlayer';
+import { YoutubeSearcher } from './YoutubeSearcher';
 
 export function PlayList() {
     
@@ -15,7 +16,6 @@ export function PlayList() {
 
     function playUrl(url) {
         setCurrentPlayingUrl(url);
-        
     }
 
 
@@ -23,7 +23,7 @@ export function PlayList() {
         <div className="playlist">
             <input type="text" name="youtube-url" onChange={(event) => setYoutubeUrl(event.target.value)}/><br/>
             <button onClick={() => addToPlayList(youtubeUrl)}>Add</button>
-
+            <YoutubeSearcher/>
             <h2>PlayList</h2>
             <ol>
                 {playList.map((listItem) =>  
