@@ -19,14 +19,20 @@ export function YoutubeSearcher({playList, setPlayList}) {
             setVideos(videos);
         });
         */
+        const videoOne = mockSearchResultItem("5abamRO41fE", "Slipknot - psychosocial");
+        const videoTwo = mockSearchResultItem("aCyGvGEtOwc", "Paramore - Misery Business");
+        setVideos([...videos, videoOne, videoTwo]);
+    }
+
+    function mockSearchResultItem(videoId, title) {
         const video = {};
         video.snippet = {};
         video.id ={};
-        video.id.videoId = "5abamRO41fE";
+        video.id.videoId = videoId
         video.snippet.thumbnailUrl = youtubeThumbNailUrlBase +  video.id.videoId + "/3.jpg";
-        video.snippet.title = "Slipknot - psychosocial";
+        video.snippet.title = title;
         video.id.videoUrl = youtubeUrlBase + video.id.videoId;
-        setVideos([...videos, video]);
+        return  video;
     }
 
     function addToPlayList(video) {
