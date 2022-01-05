@@ -37,7 +37,6 @@ app.post('/playlist', function (req, res) {
 app.get('/playlist', function(req, res) {
     playLists = [];
     fs.readdirSync(playlistDirectory).forEach(file => {
-        console.log(file);
         playLists.push(file);
       });
     res.setHeader('Content-Type', 'application/json');
@@ -59,8 +58,39 @@ app.put('/playlist/:name', function(req, res) {
     res.status(200).send("");
 });
 
+app.delete('/playlist/:name', async function(req, res) {
+    playlistName = req.params.name;
+    youtubeUrl = req.query.url;
+    if(!playlistName || !youtubeUrl) res.status(500).send("bad input");
+    var pathToPlayList = playlistDirectory + playlistName;
+    if (!fs.existsSync(pathToPlayList)){
+        res.status(404).send("playlist not exist");
+    }
+    data = fs.readFileSync(pathToPlayList);
+    playList = JSON.parse(data);
+    var removed = await removeTrackFromPlayList(playList, youtubeUrl);
+    if(removed) {
+        fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
+        res.status(200).send("");
+    }else {
+        res.status(404).send("youtubeUrl is not in the playlist");
+    }
+    
+});
+
+async function removeTrackFromPlayList(playList, youtubeUrl) {
+    var removed = false;
+    playList.map((track) => {
+        if(track.youtubeUrl === youtubeUrl) {
+            playList.pop(track);
+            removed = true;
+        }
+    });
+    return removed;
+}
+
+
 app.get('/playlist/:name', function(req, res) {
-    console.log(req.body);
     playlistName = req.params.name;
     var pathToPlayList = playlistDirectory + playlistName;
     if (!fs.existsSync(pathToPlayList)){
