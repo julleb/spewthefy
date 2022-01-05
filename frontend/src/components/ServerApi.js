@@ -33,6 +33,15 @@ const ServerApi = {
                 track: track
               })
         });
+    },
+
+    getPlayList: function(playListName) {
+        return fetch(playListEndpoint + "/" + playListName, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 }
 export default ServerApi;

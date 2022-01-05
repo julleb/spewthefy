@@ -57,8 +57,9 @@ app.get('/playlist/:name', function(req, res) {
         res.status(404).send("playlist not exist");
     }
     data = fs.readFileSync(pathToPlayList);
+    json = JSON.parse(data);
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(data);
+    res.status(200).send(json);
 });
 
 

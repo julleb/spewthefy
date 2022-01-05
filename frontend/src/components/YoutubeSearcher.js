@@ -30,7 +30,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
         const track2 = {youtubeUrl: videoTwo.id.videoUrl, title: videoTwo.snippet.title, thumbNail: videoTwo.snippet.thumbnailUrl};
         const track3 = {youtubeUrl: videoThree.id.videoUrl, title: videoThree.snippet.title, thumbNail: videoThree.snippet.thumbnailUrl};
         var myPlayList = [track1, track2, track3];
-        setPlayList(myPlayList);
+        //setPlayList(myPlayList);
     }
 
     function mockSearchResultItem(videoId, title) {

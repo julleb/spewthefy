@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { AudioPlayer } from './AudioPlayer';
 import { YoutubeSearcher } from './YoutubeSearcher';
 import { MediaSession } from './MediaSession';
+import ServerApi from './ServerApi'
 
 export function PlayList({playListName}) {
     
-    const [playList, setPlayList] = useState([]);
+    const [playList, setPlayList] = useState();
     const [currentTrack, setCurrentTrack] = useState()
 
     const [debugText, setDebugText] = useState()    
+
+    useEffect (() => {
+            //init playList
+            getPlayList();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
 
     function nextTrack() {
         if(!currentTrack) return;
@@ -45,6 +52,19 @@ export function PlayList({playListName}) {
         setCurrentTrack(track);
     }
 
+    function getPlayList() {
+        ServerApi.getPlayList(playListName)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }else {
+                console.log("Failed to create Playlist " + playListName);
+            }
+        }).then(data => {
+            setPlayList(data);
+        });
+    }
+
     return(
         <div className="playlist">
 
@@ -52,7 +72,7 @@ export function PlayList({playListName}) {
             <h2>PlayList: {playListName}</h2>
             <h3>{debugText}</h3>
             <ol>
-                {playList.map((track) =>  
+                {playList?.map((track) =>  
                         <li>
                             <div>
                                 {track.title}
