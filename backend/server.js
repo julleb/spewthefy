@@ -5,6 +5,15 @@ const youtube_streamer = require('youtube-audio-stream')
 app.use(express.json());
 var cors = require('cors');
 
+var playlistDirectory = "playlists/";
+
+function createPlayListDirectory() {
+    if (!fs.existsSync(playlistDirectory)){
+        fs.mkdirSync(playlistDirectory);
+    }
+}
+createPlayListDirectory();
+
 app.use(cors({
     origin: '*'
 }));
@@ -15,8 +24,29 @@ app.get('/', function (req, res) {
 });
 
 app.post('/playlist', function (req, res) {
-    console.log(req.body); 
+    var playlist = req.body.name;
+    if(!playlist) {
+        res.status(500).send("No name given");
+    }
+    fs.writeFileSync(playlistDirectory + playlist, "", (err) => {if (err) res.status(500).send("failed to create playlist")});
     res.status(200).send("created");
+});
+
+app.put('/playlist/:name', function(req, res) {
+    track = req.body.track;
+    playlistName = req.params.name
+    if(!track) res.status(500).send("no track object sent");
+    var pathToPlayList = playlistDirectory + playlistName;
+    if (!fs.existsSync(pathToPlayList)){
+        res.status(500).send("playlist does not exist");
+    }
+    fs.appendFileSync(pathToPlayList, JSON.stringify(track));
+    res.status(200);
+});
+
+app.get('/playlist/:name', function(req, res) {
+    console.log(req.body);
+    res.status(200).send("yes");
 });
 
 
