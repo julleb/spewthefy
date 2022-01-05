@@ -3,7 +3,7 @@ import { AudioPlayer } from './AudioPlayer';
 import { YoutubeSearcher } from './YoutubeSearcher';
 import { MediaSession } from './MediaSession';
 
-export function PlayList() {
+export function PlayList({playListName}) {
     
     const [playList, setPlayList] = useState([]);
     const [currentTrack, setCurrentTrack] = useState()
@@ -49,7 +49,7 @@ export function PlayList() {
         <div className="playlist">
 
             <YoutubeSearcher playList={playList} setPlayList={setPlayList}/>
-            <h2>PlayList</h2>
+            <h2>PlayList: {playListName}</h2>
             <h3>{debugText}</h3>
             <ol>
                 {playList.map((track) =>  

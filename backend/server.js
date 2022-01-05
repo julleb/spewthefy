@@ -2,10 +2,22 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 const youtube_streamer = require('youtube-audio-stream')
+app.use(express.json());
+var cors = require('cors');
+
+app.use(cors({
+    origin: '*'
+}));
 
 app.get('/', function (req, res) {
+    console.log("Text: " + req.query.text);
    res.status(200).send("Hello!");
-})
+});
+
+app.post('/playlist', function (req, res) {
+    console.log(req.body); 
+    res.status(200).send("created");
+});
 
 
 app.get('/audio', function (req, res) {
@@ -24,7 +36,7 @@ app.get('/audio', function (req, res) {
     }catch(err) {
         res.status(500).send("Failed to stream. " + err);
     }
- })
+ });
 
 
 var server = app.listen(8081, function () {

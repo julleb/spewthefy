@@ -1,13 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
 import { PlayList } from './components/PlayList';
-
+import { PlayLists } from './components/PlayLists';
+import React, { useState } from 'react';
 
 function App() {
+
+  const [showPlayLists, setShowPlayLists] = useState(true);
+  const [currentPlayList, setCurrentPlayList] = useState();
+
   return (
 
     <div className="App">
-      <PlayList/>
+      {showPlayLists && !currentPlayList ?
+           <PlayLists setCurrentPlayList={setCurrentPlayList}/> :
+           null
+      }
+      {currentPlayList ?
+           <PlayList playListName={currentPlayList}/> :
+           null
+      }
     </div>
   );
 }
