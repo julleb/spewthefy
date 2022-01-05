@@ -21,7 +21,15 @@ export function YoutubeSearcher({playList, setPlayList}) {
         */
         const videoOne = mockSearchResultItem("5abamRO41fE", "Slipknot - psychosocial");
         const videoTwo = mockSearchResultItem("aCyGvGEtOwc", "Paramore - Misery Business");
-        setVideos([...videos, videoOne, videoTwo]);
+        const videoThree = mockSearchResultItem("UDVtMYqUAyw", "Interstellar");
+        setVideos([...videos, videoOne, videoTwo, videoThree]);
+
+        //mockning
+        const track1 = {youtubeUrl: videoOne.id.videoUrl, title: videoOne.snippet.title, thumbNail: videoOne.snippet.thumbnailUrl};
+        const track2 = {youtubeUrl: videoTwo.id.videoUrl, title: videoTwo.snippet.title, thumbNail: videoTwo.snippet.thumbnailUrl};
+        const track3 = {youtubeUrl: videoThree.id.videoUrl, title: videoThree.snippet.title, thumbNail: videoThree.snippet.thumbnailUrl};
+        var myPlayList = [track1, track2, track3];
+        setPlayList(myPlayList);
     }
 
     function mockSearchResultItem(videoId, title) {
@@ -37,14 +45,14 @@ export function YoutubeSearcher({playList, setPlayList}) {
 
     function addToPlayList(video) {
         console.log(video);
-        console.log(video.snippet.title);
-        const playListItem = {youtubeUrl: video.id.videoUrl, title: video.snippet.title};
+        console.log("add dis " + video.snippet.title);
+        const playListItem = {youtubeUrl: video.id.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
         setPlayList([...playList, playListItem]);
     }
 
       //querying youtube each 1500ms
       useEffect (() => {
-        const timeOutId = setTimeout(() => searchYoutubeVideo(query), 500);
+        const timeOutId = setTimeout(() => searchYoutubeVideo(query), 1500);
         return () => clearTimeout(timeOutId);
       }, [query]);
 
