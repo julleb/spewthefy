@@ -3,12 +3,12 @@ const backendBaseUrl = 'http://localhost:8081/';
 
 
 const audioBaseEndpoint =  backendBaseUrl + "audio?url=";
-const createPlayListEndpoint =  backendBaseUrl + "playlist";
+const playListEndpoint =  backendBaseUrl + "playlist";
 
 
 const ServerApi = {
     createPlayList: function(playListName) {
-        return fetch(createPlayListEndpoint, {
+        return fetch(playListEndpoint, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,6 +21,18 @@ const ServerApi = {
 
     getAudioUrl: function(trackUrl) {
         return audioBaseEndpoint + trackUrl;
+    },
+
+    addTrackToPlayList: function(playListName, track) {
+        return fetch(playListEndpoint + "/" + playListName, {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                track: track
+              })
+        });
     }
 }
 export default ServerApi;

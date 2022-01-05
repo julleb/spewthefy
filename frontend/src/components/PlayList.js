@@ -48,7 +48,7 @@ export function PlayList({playListName}) {
     return(
         <div className="playlist">
 
-            <YoutubeSearcher playList={playList} setPlayList={setPlayList}/>
+            <YoutubeSearcher playListName={playListName} playList={playList} setPlayList={setPlayList}/>
             <h2>PlayList: {playListName}</h2>
             <h3>{debugText}</h3>
             <ol>

@@ -1,7 +1,8 @@
 import YoutubeSearch from 'youtube-api-search'
 import React, { useState, useCallback, useEffect }  from 'react';
+import ServerApi from './ServerApi'
 
-export function YoutubeSearcher({playList, setPlayList}) {
+export function YoutubeSearcher({playListName, playList, setPlayList}) {
     const API_KEY = "XXX";
     const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/"
     const youtubeUrlBase = "https://www.youtube.com/watch?v=";
@@ -43,11 +44,18 @@ export function YoutubeSearcher({playList, setPlayList}) {
         return  video;
     }
 
-    function addToPlayList(video) {
+    async function addToPlayList(video) {
         console.log(video);
         console.log("add dis " + video.snippet.title);
-        const playListItem = {youtubeUrl: video.id.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
-        setPlayList([...playList, playListItem]);
+        const track = {youtubeUrl: video.id.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
+        await ServerApi.addTrackToPlayList(playListName, track)
+        .then(response => {
+            if(response.ok) {
+                setPlayList([...playList, track]);
+            }else {
+                console.log("Failed to add track to playlist " + track.title);
+            }
+        });
     }
 
       //querying youtube each 1500ms
