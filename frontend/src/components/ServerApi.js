@@ -17,6 +17,10 @@ const ServerApi = {
                 name: playListName
               })
         });
+    },
+
+    getAudioUrl: function(trackUrl) {
+        return audioBaseEndpoint + trackUrl;
     }
 }
 export default ServerApi;

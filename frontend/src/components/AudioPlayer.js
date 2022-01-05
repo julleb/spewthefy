@@ -1,5 +1,6 @@
 
 import ReactAudioPlayer from 'react-audio-player';
+import ServerApi from './ServerApi'
 
 export function AudioPlayer({track}) {
   
@@ -7,7 +8,7 @@ export function AudioPlayer({track}) {
   if(track) {
       trackUrl = track.youtubeUrl;
   }
-  const backendUrl = "http://localhost:8081/audio?url=" + trackUrl;
+  const backendUrl = ServerApi.getAudioUrl(trackUrl);
 
 
     return (
