@@ -51,6 +51,15 @@ const ServerApi = {
                 'Content-Type': 'application/json'
             }
         });
+    },
+
+    removeFromPlayList: function(playListName, youtubeUrl) {
+        return fetch(playListEndpoint + "/" + playListName + "?url=" + youtubeUrl, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 }
 export default ServerApi;

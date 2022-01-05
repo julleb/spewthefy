@@ -52,6 +52,19 @@ export function PlayList({playListName}) {
         setCurrentTrack(track);
     }
 
+    function removeTrack(track) {
+        ServerApi.removeFromPlayList(playListName, track.youtubeUrl)
+        .then(response => {
+            if(response.ok) {
+                setPlayList(playList.filter(x => 
+                    x.youtubeUrl !== track.youtubeUrl
+                ))
+            }else {
+                console.log("Failed to get playlistName " + playListName);
+            }
+        })
+    }
+
     function getPlayList() {
         ServerApi.getPlayList(playListName)
         .then(response => {
@@ -78,6 +91,7 @@ export function PlayList({playListName}) {
                             <div>
                                 {track.title}
                                 <button onClick={() => playTrack(track)}>Play</button>
+                                <button onClick={() => removeTrack(track)}>Remove</button>
                             </div>
                         </li> 
                     )
