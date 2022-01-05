@@ -58,7 +58,8 @@ export function PlayList({playListName}) {
             if(response.ok) {
                 return response.json();
             }else {
-                console.log("Failed to create Playlist " + playListName);
+                console.log("Failed to get playlistName " + playListName);
+                setPlayList([])
             }
         }).then(data => {
             setPlayList(data);

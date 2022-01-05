@@ -1,12 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ServerApi from './ServerApi'
 export function PlayLists({setCurrentPlayList}) {
 
     const [playLists, setPlayLists] = useState([]);
     const [createInput, setCreateInput] = useState();
 
+    /*
     if(playLists.length === 0) {
         setPlayLists(['My First List', 'My Second List']);
+    }*/
+
+
+    useEffect (() => {
+        //init playList
+        getPlaylists();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    function getPlaylists() {
+        ServerApi.getPlayLists().then(response => {
+            if(response.ok) {
+                return response.json();
+            }else {
+                console.log("Failed to get playlists");
+                setPlayLists([]);
+            }
+        }).then(data => {
+            setPlayLists(data);
+        });
     }
    
     async function createPlayList(playListName) {

@@ -34,6 +34,16 @@ app.post('/playlist', function (req, res) {
     res.status(200).send("created");
 });
 
+app.get('/playlist', function(req, res) {
+    playLists = [];
+    fs.readdirSync(playlistDirectory).forEach(file => {
+        console.log(file);
+        playLists.push(file);
+      });
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify(playLists));
+});
+
 app.put('/playlist/:name', function(req, res) {
     track = req.body.track;
     playlistName = req.params.name

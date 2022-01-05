@@ -42,6 +42,15 @@ const ServerApi = {
                 'Content-Type': 'application/json'
             }
         });
+    },
+
+    getPlayLists: function() {
+        return fetch(playListEndpoint, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 }
 export default ServerApi;
