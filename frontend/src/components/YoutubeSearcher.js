@@ -3,14 +3,17 @@ import React, { useState, useCallback, useEffect }  from 'react';
 import ServerApi from './ServerApi'
 
 export function YoutubeSearcher({playListName, playList, setPlayList}) {
-    const API_KEY = "XXX";
+    const API_KEY = "XX";
     const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/"
     const youtubeUrlBase = "https://www.youtube.com/watch?v=";
     const [videos, setVideos] = useState([]);
     const [query, setQuery] = useState("");
 
     function searchYoutubeVideo(searchText) {
-        if(!searchText || searchText.length <= 1) return;
+        if(!searchText || searchText.length <= 1) {
+            setVideos([]);
+            return;
+        }
         YoutubeSearch({key: API_KEY, term: searchText}, videos => {
             setVideos(videos.map((video) => {
                 const videoId = video.id.videoId;
