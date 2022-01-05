@@ -72,18 +72,23 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
             <input type="text" name="youtube-text" onChange={event => setQuery(event.target.value)}/><br/>
             <div>
                 <h2>Search Result</h2>
-                <ol>
-                    {videos.map((video) =>  
-                            <li>
+                <div className="d-flex justify-content-center">
+                    <ul className="list-group w-50">
+                        {videos?.map((video) =>
+
+                            <li className="d-flex flex-row justify-content-between align-items-center list-group-item">
+                                <img src={video.snippet.thumbnailUrl} alt="alternative?"></img>
                                 <div>
-                                   <img src={video.snippet.thumbnailUrl} alt="alternative?"></img>
-                                   {video.id.videoId} {video.snippet.title}
-                                   <button onClick={() => addToPlayList(video)}>Add</button>
+                                    {video.snippet.title}
                                 </div>
-                            </li> 
+                                <div className="d-flex justify-content-end">
+                                    <button onClick={() => addToPlayList(video)}>Add</button>
+                                </div>
+                            </li>
                         )
-                    } 
-                </ol> 
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     )
