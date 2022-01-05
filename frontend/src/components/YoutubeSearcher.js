@@ -10,26 +10,28 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
     const [query, setQuery] = useState("");
 
     function searchYoutubeVideo(searchText) {
-        /*
+        if(!searchText || searchText.length <= 1) return;
         YoutubeSearch({key: API_KEY, term: searchText}, videos => {
-            for (var i=0; i < videos.length; i++) {
-                const videoId = videos[i].id.videoId;
-                videos[i].snippet.thumbnailUrl = youtubeThumbNailUrlBase + videoId + "/3.jpg";
-                videos[i].snippet.videoUrl = youtubeUrlBase + videoId;
-            } 
-            setVideos(videos);
+            setVideos(videos.map((video) => {
+                const videoId = video.id.videoId;
+                video.snippet.thumbnailUrl = youtubeThumbNailUrlBase + videoId + "/3.jpg";
+                video.snippet.videoUrl = youtubeUrlBase + videoId;
+                return video;
+            }));
         });
-        */
-        const videoOne = mockSearchResultItem("5abamRO41fE", "Slipknot - psychosocial");
-        const videoTwo = mockSearchResultItem("aCyGvGEtOwc", "Paramore - Misery Business");
-        const videoThree = mockSearchResultItem("UDVtMYqUAyw", "Interstellar");
-        setVideos([...videos, videoOne, videoTwo, videoThree]);
+        
+        //const videoOne = mockSearchResultItem("5abamRO41fE", "Slipknot - psychosocial");
+        //const videoTwo = mockSearchResultItem("aCyGvGEtOwc", "Paramore - Misery Business");
+        //const videoThree = mockSearchResultItem("UDVtMYqUAyw", "Interstellar");
+        //setVideos([...videos, videoOne, videoTwo, videoThree]);
 
         //mockning
+        /*
         const track1 = {youtubeUrl: videoOne.id.videoUrl, title: videoOne.snippet.title, thumbNail: videoOne.snippet.thumbnailUrl};
         const track2 = {youtubeUrl: videoTwo.id.videoUrl, title: videoTwo.snippet.title, thumbNail: videoTwo.snippet.thumbnailUrl};
         const track3 = {youtubeUrl: videoThree.id.videoUrl, title: videoThree.snippet.title, thumbNail: videoThree.snippet.thumbnailUrl};
         var myPlayList = [track1, track2, track3];
+        */
         //setPlayList(myPlayList);
     }
 
@@ -45,9 +47,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
     }
 
     async function addToPlayList(video) {
-        console.log(video);
-        console.log("add dis " + video.snippet.title);
-        const track = {youtubeUrl: video.id.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
+        const track = {youtubeUrl: video.snippet.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
         await ServerApi.addTrackToPlayList(playListName, track)
         .then(response => {
             if(response.ok) {
