@@ -14,6 +14,8 @@ function createPlayListDirectory() {
 }
 createPlayListDirectory();
 
+
+
 app.use(cors({
     origin: '*'
 }));
@@ -28,7 +30,7 @@ app.post('/playlist', function (req, res) {
     if(!playlist) {
         res.status(500).send("No name given");
     }
-    fs.writeFileSync(playlistDirectory + playlist, "", (err) => {if (err) res.status(500).send("failed to create playlist")});
+    fs.writeFileSync(playlistDirectory + playlist, "[]", (err) => {if (err) res.status(500).send("failed to create playlist")});
     res.status(200).send("created");
 });
 
@@ -40,13 +42,23 @@ app.put('/playlist/:name', function(req, res) {
     if (!fs.existsSync(pathToPlayList)){
         res.status(500).send("playlist does not exist");
     }
-    fs.appendFileSync(pathToPlayList, JSON.stringify(track));
-    res.status(200);
+    data = fs.readFileSync(pathToPlayList);
+    playList = JSON.parse(data)
+    playList.push(track);
+    fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
+    res.status(200).send("");
 });
 
 app.get('/playlist/:name', function(req, res) {
     console.log(req.body);
-    res.status(200).send("yes");
+    playlistName = req.params.name;
+    var pathToPlayList = playlistDirectory + playlistName;
+    if (!fs.existsSync(pathToPlayList)){
+        res.status(404).send("playlist not exist");
+    }
+    data = fs.readFileSync(pathToPlayList);
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(data);
 });
 
 
