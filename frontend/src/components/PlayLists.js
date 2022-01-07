@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ServerApi from './ServerApi'
+import { v4 as uuidv4 } from 'uuid';
+
 export function PlayLists({setCurrentPlayList}) {
 
     const [playLists, setPlayLists] = useState([]);
@@ -49,7 +51,7 @@ export function PlayLists({setCurrentPlayList}) {
             <button onClick={() => createPlayList(createInput)}>Create</button>
             <ol>
                 {playLists.map((playList) =>  
-                        <li>
+                        <li key={uuidv4()}>
                             <div>
                                 <button onClick={() => setCurrentPlayList(playList)}>{playList}</button>
                             </div>

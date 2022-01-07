@@ -1,9 +1,10 @@
 import YoutubeSearch from 'youtube-api-search'
 import React, { useState, useCallback, useEffect }  from 'react';
 import ServerApi from './ServerApi'
+import { v4 as uuidv4 } from 'uuid';
 
 export function YoutubeSearcher({playListName, playList, setPlayList}) {
-    const API_KEY = "XXX";
+    const API_KEY = "XX";
     const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/"
     const youtubeUrlBase = "https://www.youtube.com/watch?v=";
     const [videos, setVideos] = useState([]);
@@ -19,6 +20,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
                 const videoId = video.id.videoId;
                 video.snippet.thumbnailUrl = youtubeThumbNailUrlBase + videoId + "/3.jpg";
                 video.snippet.videoUrl = youtubeUrlBase + videoId;
+                video.uuid = uuidv4();
                 return video;
             }));
         });
@@ -46,11 +48,12 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
         video.snippet.thumbnailUrl = youtubeThumbNailUrlBase +  video.id.videoId + "/3.jpg";
         video.snippet.title = title;
         video.id.videoUrl = youtubeUrlBase + video.id.videoId;
+        video.uuid = uuidv4();
         return  video;
     }
 
     async function addToPlayList(video) {
-        const track = {youtubeUrl: video.snippet.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
+        const track = {uuid: video.uuid, youtubeUrl: video.snippet.videoUrl, title: video.snippet.title, thumbNail: video.snippet.thumbnailUrl};
         await ServerApi.addTrackToPlayList(playListName, track)
         .then(response => {
             if(response.ok) {
@@ -76,7 +79,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
                     <ul className="list-group">
                         {videos?.map((video) =>
 
-                            <li className="d-flex flex-row justify-content-between align-items-center list-group-item">
+                            <li key={video.uuid} className="d-flex flex-row justify-content-between align-items-center list-group-item">
                                 <img src={video.snippet.thumbnailUrl} alt="alternative?"></img>
                                 <div>
                                     {video.snippet.title}

@@ -56,9 +56,7 @@ export function PlayList({ playListName }) {
         ServerApi.removeFromPlayList(playListName, track.youtubeUrl)
             .then(response => {
                 if (response.ok) {
-                    setPlayList(playList.filter(x =>
-                        x.youtubeUrl !== track.youtubeUrl
-                    ))
+                    getPlayList();
                 } else {
                     console.log("Failed to get playlistName " + playListName);
                 }
@@ -90,7 +88,7 @@ export function PlayList({ playListName }) {
                 <ul className="list-group">
                     {playList?.map((track) =>
 
-                        <li onClick={() => playTrack(track)} className={`${currentTrack?.youtubeUrl === track.youtubeUrl ? "active" : ""} list-group-item`}>{track.title}
+                        <li key={track.uuid} onClick={() => playTrack(track)} className={`${currentTrack?.youtubeUrl === track.youtubeUrl ? "active" : ""} list-group-item`}>{track.title}
                             <div className="d-flex justify-content-end">
                                 <button className="btn" onClick={(event) => { event.stopPropagation(); removeTrack(track); }}><i className="bi bi-trash"></i></button>
                             </div>
