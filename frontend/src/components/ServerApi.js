@@ -53,8 +53,8 @@ const ServerApi = {
         });
     },
 
-    removeFromPlayList: function(playListName, youtubeUrl) {
-        return fetch(playListEndpoint + "/" + playListName + "?url=" + youtubeUrl, {
+    removeFromPlayList: function(playListName, uuid) {
+        return fetch(playListEndpoint + "/" + playListName + "?uuid=" + uuid, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json'

@@ -48,11 +48,11 @@ app.put('/playlist/:name', async function(req, res) {
 
 app.delete('/playlist/:name', async function(req, res) {
     playlistName = req.params.name;
-    youtubeUrl = req.query.url;
-    if(!playlistName || !youtubeUrl) res.status(500).send("bad input");
+    uuid = req.query.uuid;
+    if(!playlistName || !uuid) res.status(500).send("bad input");
 
     try {
-        removed = await playlistservice.deleteTrackFromPlayList(playlistName, youtubeUrl);
+        removed = await playlistservice.deleteTrackFromPlayList(playlistName, uuid);
         if(removed) {
             res.status(200).send("");
         }else {

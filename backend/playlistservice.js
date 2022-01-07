@@ -59,14 +59,16 @@ module.exports =  {
         fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
     }, 
 
-    deleteTrackFromPlayList: async function(playlistName, youtubeUrl) {
+    deleteTrackFromPlayList: async function(playlistName, uuid) {
         var pathToPlayList = this.getPlayListPath(playlistName);
         if (!fs.existsSync(pathToPlayList)){
             throw Error(this.PLAYLIST_NOT_FOUND);
         }
         data = fs.readFileSync(pathToPlayList);
         playList = JSON.parse(data);
-        var removed = await this.removeTrackFromPlaylistFile(playList, youtubeUrl);
+        var obj = await this.removeTrackFromPlaylistFile(playList, uuid);
+        removed = obj.removed;
+        playList = obj.playList;
         if(removed) {
             fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
             return true;
@@ -75,15 +77,14 @@ module.exports =  {
         }
     },
 
-    removeTrackFromPlaylistFile: async function (playList, youtubeUrl) {
+    removeTrackFromPlaylistFile: async function (playList, uuid) {
         var removed = false;
-        playList.map((track) => {
-            if(track.youtubeUrl === youtubeUrl) {
-                playList.pop(track);
-                removed = true;
-            }
+        filteredPlaylist = playList.filter(function(track) {
+            return track.uuid !== uuid
         });
-        return removed;
+        removed = playList.length !== filteredPlaylist;
+        playList = filteredPlaylist;
+        return {removed: removed, playList: filteredPlaylist};
     }
 
 

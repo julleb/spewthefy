@@ -53,7 +53,7 @@ export function PlayList({ playListName }) {
     }
 
     function removeTrack(track) {
-        ServerApi.removeFromPlayList(playListName, track.youtubeUrl)
+        ServerApi.removeFromPlayList(playListName, track.uuid)
             .then(response => {
                 if (response.ok) {
                     getPlayList();
