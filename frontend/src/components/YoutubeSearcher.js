@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect }  from 'react';
 import ServerApi from './ServerApi'
 
 export function YoutubeSearcher({playListName, playList, setPlayList}) {
-    const API_KEY = "XX";
+    const API_KEY = "XXX";
     const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/"
     const youtubeUrlBase = "https://www.youtube.com/watch?v=";
     const [videos, setVideos] = useState([]);
@@ -73,7 +73,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
             <div>
                 <h2>Search Result</h2>
                 <div className="d-flex justify-content-center">
-                    <ul className="list-group w-50">
+                    <ul className="list-group">
                         {videos?.map((video) =>
 
                             <li className="d-flex flex-row justify-content-between align-items-center list-group-item">
@@ -82,7 +82,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
                                     {video.snippet.title}
                                 </div>
                                 <div className="d-flex justify-content-end">
-                                    <button onClick={() => addToPlayList(video)}>Add</button>
+                                    <button className="btn btn-success" onClick={() => addToPlayList(video)}>Add</button>
                                 </div>
                             </li>
                         )

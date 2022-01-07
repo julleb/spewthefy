@@ -87,7 +87,7 @@ export function PlayList({ playListName }) {
             <h3>{debugText}</h3>
 
             <div className="d-flex justify-content-center">
-                <ul className="list-group w-50">
+                <ul className="list-group">
                     {playList?.map((track) =>
 
                         <li onClick={() => playTrack(track)} className={`${currentTrack?.youtubeUrl === track.youtubeUrl ? "active" : ""} list-group-item`}>{track.title}
