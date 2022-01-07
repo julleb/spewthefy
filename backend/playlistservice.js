@@ -3,7 +3,7 @@ var fs = require("fs");
 
 
 var playlistDirectory = "playlists/";
-
+var playlistNameRegex = /^[A-Za-z0-9]+$/;
 
 module.exports =  {
 
@@ -31,6 +31,9 @@ module.exports =  {
     },
 
     createPlaylist: async function(name) {
+        if (!playlistNameRegex.test(name)) {
+            throw Error("playlist must only contain...characters");
+        }
         var pathToPlayList = this.getPlayListPath(name);
         if (fs.existsSync(pathToPlayList)){
             throw Error("playlist already exists");
@@ -39,6 +42,9 @@ module.exports =  {
     },
 
     getPlaylist: async function(name) {
+        if (!playlistNameRegex.test(name)) {
+            throw Error(this.PLAYLIST_NOT_FOUND);
+        }
         var pathToPlayList = this.getPlayListPath(name);
         if (!fs.existsSync(pathToPlayList)){
             throw Error(this.PLAYLIST_NOT_FOUND);
@@ -49,6 +55,9 @@ module.exports =  {
     },
 
     updatePlaylistWithTrack: async function (playlistName, track) {
+        if (!playlistNameRegex.test(playlistName)) {
+            throw Error(this.PLAYLIST_NOT_FOUND);
+        }
         var pathToPlayList = this.getPlayListPath(playlistName);
         if (!fs.existsSync(pathToPlayList)){
             throw Error(this.PLAYLIST_NOT_FOUND);
@@ -60,6 +69,9 @@ module.exports =  {
     }, 
 
     deleteTrackFromPlayList: async function(playlistName, uuid) {
+        if (!playlistNameRegex.test(nplaylistNameame)) {
+            throw Error(this.PLAYLIST_NOT_FOUND);
+        }
         var pathToPlayList = this.getPlayListPath(playlistName);
         if (!fs.existsSync(pathToPlayList)){
             throw Error(this.PLAYLIST_NOT_FOUND);
