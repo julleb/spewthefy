@@ -5,15 +5,8 @@ const youtube_streamer = require('youtube-audio-stream')
 app.use(express.json());
 var cors = require('cors');
 
-var playlistDirectory = "playlists/";
-
-function createPlayListDirectory() {
-    if (!fs.existsSync(playlistDirectory)){
-        fs.mkdirSync(playlistDirectory);
-    }
-}
-createPlayListDirectory();
-
+var playlistservice = require('./playlistservice');  
+playlistservice.createPlayListDirectory();
 
 
 app.use(cors({
@@ -25,36 +18,31 @@ app.get('/', function (req, res) {
    res.status(200).send("Hello!");
 });
 
-app.post('/playlist', function (req, res) {
+app.post('/playlist', async function (req, res) {
     var playlist = req.body.name;
     if(!playlist) {
         res.status(500).send("No name given");
+        return;
     }
-    fs.writeFileSync(playlistDirectory + playlist, "[]", (err) => {if (err) res.status(500).send("failed to create playlist")});
-    res.status(200).send("created");
+    try {
+        await playlistservice.createPlaylist(playlist);
+        res.status(200).send("created");
+    } catch(e) {
+        res.status(500).send(e.message);
+    }
 });
 
-app.get('/playlist', function(req, res) {
-    playLists = [];
-    fs.readdirSync(playlistDirectory).forEach(file => {
-        playLists.push(file);
-      });
+app.get('/playlist', async function(req, res) {
+    playLists = await playlistservice.getPlaylists();
     res.setHeader('Content-Type', 'application/json');
     res.status(200).send(JSON.stringify(playLists));
 });
 
-app.put('/playlist/:name', function(req, res) {
+app.put('/playlist/:name', async function(req, res) {
     track = req.body.track;
     playlistName = req.params.name
     if(!track) res.status(500).send("no track object sent");
-    var pathToPlayList = playlistDirectory + playlistName;
-    if (!fs.existsSync(pathToPlayList)){
-        res.status(500).send("playlist does not exist");
-    }
-    data = fs.readFileSync(pathToPlayList);
-    playList = JSON.parse(data)
-    playList.push(track);
-    fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
+    await playlistservice.updatePlaylistWithTrack(playlistName, track);
     res.status(200).send("");
 });
 
@@ -62,44 +50,38 @@ app.delete('/playlist/:name', async function(req, res) {
     playlistName = req.params.name;
     youtubeUrl = req.query.url;
     if(!playlistName || !youtubeUrl) res.status(500).send("bad input");
-    var pathToPlayList = playlistDirectory + playlistName;
-    if (!fs.existsSync(pathToPlayList)){
-        res.status(404).send("playlist not exist");
+
+    try {
+        removed = await playlistservice.deleteTrackFromPlayList(playlistName, youtubeUrl);
+        if(removed) {
+            res.status(200).send("");
+        }else {
+            res.status(500).send("failed to remove");
+        }
+    }catch(e) {
+        if(e.message === playlistservice.TRACK_NOT_FOUND || e.message === playlistservice.PLAYLIST_NOT_FOUND) {
+             res.status(404);
+        }else{
+            res.status(500);
+        }
+        res.send(e.message);
     }
-    data = fs.readFileSync(pathToPlayList);
-    playList = JSON.parse(data);
-    var removed = await removeTrackFromPlayList(playList, youtubeUrl);
-    if(removed) {
-        fs.writeFileSync(pathToPlayList, JSON.stringify(playList));
-        res.status(200).send("");
-    }else {
-        res.status(404).send("youtubeUrl is not in the playlist");
-    }
-    
 });
 
-async function removeTrackFromPlayList(playList, youtubeUrl) {
-    var removed = false;
-    playList.map((track) => {
-        if(track.youtubeUrl === youtubeUrl) {
-            playList.pop(track);
-            removed = true;
-        }
-    });
-    return removed;
-}
 
-
-app.get('/playlist/:name', function(req, res) {
+app.get('/playlist/:name', async function(req, res) {
     playlistName = req.params.name;
-    var pathToPlayList = playlistDirectory + playlistName;
-    if (!fs.existsSync(pathToPlayList)){
-        res.status(404).send("playlist not exist");
+    try {
+        const json = await playlistservice.getPlaylist(playlistName);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).send(json);
+    }catch(e) {
+        if(e.message === playlistservice.PLAYLIST_NOT_FOUND) {
+            res.status(404).send(e.message);
+        }else {
+            res.status(500).send("failed");
+        }
     }
-    data = fs.readFileSync(pathToPlayList);
-    json = JSON.parse(data);
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(json);
 });
 
 
