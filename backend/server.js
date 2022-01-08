@@ -89,12 +89,19 @@ app.get('/audio', function (req, res) {
     youtubeUrl = req.query.url
     if(!youtubeUrl) {
         res.status(201).send("No url");
+        return;
     }
-    console.log(youtubeUrl);
-    const url = new URL(youtubeUrl);
-    if(url.hostname !== "www.youtube.com") {
-        res.status(500).send("Bad url");
+    try {
+        const url = new URL(youtubeUrl);
+        if(url.hostname !== "www.youtube.com") {
+            res.status(500).send("Bad url");
+            return;
+        }
+    } catch(e) {
+        res.status(500).send("bad url");
+        return;
     }
+    
     try {
         youtube_streamer(youtubeUrl).pipe(res);
         res.set('Cache-Control', 'public, max-age=31557600');
