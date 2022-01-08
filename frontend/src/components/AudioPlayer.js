@@ -2,7 +2,7 @@
 import ReactAudioPlayer from 'react-audio-player';
 import ServerApi from './ServerApi'
 
-export function AudioPlayer({track}) {
+export function AudioPlayer({track, nextTrack}) {
   
   var trackUrl = "";
   if(track) {
@@ -17,6 +17,7 @@ export function AudioPlayer({track}) {
         src={backendUrl}
         autoPlay
         controls
+        onEnded={nextTrack}
       />
       </div>
     );

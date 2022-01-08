@@ -97,7 +97,7 @@ export function PlayList({ playListName }) {
                     }
                 </ul>
             </div>
-            <AudioPlayer track={currentTrack} />
+            <AudioPlayer track={currentTrack} nextTrack={nextTrack} />
             <MediaSession track={currentTrack} nextTrackFunction={nextTrack} previousTrackFunction={previousTrack} />
         </div>
     );
