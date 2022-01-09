@@ -9,6 +9,16 @@ var playlistservice = require('./playlistservice');
 playlistservice.createPlayListDirectory();
 
 
+
+function getErrorMessage(message) {
+    errorMessage = {message: message};
+    return JSON.stringify(errorMessage);
+}
+
+function setJsonAsContentType(res) {
+    res.setHeader('Content-Type', 'application/json');
+}
+
 app.use(cors({
     origin: '*'
 }));
@@ -19,44 +29,56 @@ app.get('/', function (req, res) {
 });
 
 app.post('/playlist', async function (req, res) {
+    setJsonAsContentType(res);
     var playlist = req.body.name;
     if(!playlist) {
-        res.status(500).send("No name given");
+        errorMsg = getErrorMessage("No name given")
+        res.status(500).send(errorMsg);
         return;
     }
     try {
         await playlistservice.createPlaylist(playlist);
-        res.status(200).send("created");
+        res.status(200).send("");
     } catch(e) {
-        res.status(500).send(e.message);
+        errorMsg = getErrorMessage(e.message)
+        res.status(500).send(errorMsg);
     }
 });
 
 app.get('/playlist', async function(req, res) {
     playLists = await playlistservice.getPlaylists();
-    res.setHeader('Content-Type', 'application/json');
+    setJsonAsContentType(res);
     res.status(200).send(JSON.stringify(playLists));
 });
 
 app.put('/playlist/:name', async function(req, res) {
     track = req.body.track;
     playlistName = req.params.name
-    if(!track) res.status(500).send("no track object sent");
+    if(!track) {
+        errorMsg = getErrorMessage("no track object sent");
+        res.status(500).send(errorMsg);
+        return;
+    } 
     await playlistservice.updatePlaylistWithTrack(playlistName, track);
-    res.status(200).send("");
+    res.status(204).send("");
 });
 
 app.delete('/playlist/:name', async function(req, res) {
+    setJsonAsContentType(res);
     playlistName = req.params.name;
     uuid = req.query.uuid;
-    if(!playlistName || !uuid) res.status(500).send("bad input");
-
+    if(!playlistName || !uuid) {
+        errorMsg = getErrorMessage("bad input");
+        res.status(500).send(errorMsg);
+        return;
+    } 
     try {
         removed = await playlistservice.deleteTrackFromPlayList(playlistName, uuid);
         if(removed) {
-            res.status(200).send("");
+            res.status(201).send("");
         }else {
-            res.status(500).send("failed to remove");
+            errorMsg = getErrorMessage("failed to remove");
+            res.status(500).send(errorMsg);
         }
     }catch(e) {
         if(e.message === playlistservice.TRACK_NOT_FOUND || e.message === playlistservice.PLAYLIST_NOT_FOUND) {
@@ -64,49 +86,54 @@ app.delete('/playlist/:name', async function(req, res) {
         }else{
             res.status(500);
         }
-        res.send(e.message);
+        errorMsg = getErrorMessage(e.message);
+        res.send(errorMsg);
     }
 });
 
 
 app.get('/playlist/:name', async function(req, res) {
+    setJsonAsContentType(res);
     playlistName = req.params.name;
     try {
         const json = await playlistservice.getPlaylist(playlistName);
-        res.setHeader('Content-Type', 'application/json');
         res.status(200).send(json);
     }catch(e) {
         if(e.message === playlistservice.PLAYLIST_NOT_FOUND) {
-            res.status(404).send(e.message);
+            errorMsg = getErrorMessage(e.message);
+            res.status(404).send(errorMsg);
         }else {
-            res.status(500).send("failed");
+            res.status(500).send(getErrorMessage("failed"));
         }
     }
 });
 
 
 app.get('/audio', function (req, res) {
+    setJsonAsContentType(res);
     youtubeUrl = req.query.url
     if(!youtubeUrl) {
-        res.status(201).send("No url");
+        res.status(201).send(getErrorMessage("no url as query param"));
         return;
     }
     try {
         const url = new URL(youtubeUrl);
         if(url.hostname !== "www.youtube.com") {
-            res.status(500).send("Bad url");
+            errorMsg = getErrorMessage("bad url");
+            res.status(500).send(errorMsg);
             return;
         }
     } catch(e) {
-        res.status(500).send("bad url");
+        errorMsg = getErrorMessage("bad url");
+        res.status(500).send(errorMsg);
         return;
     }
-    
     try {
         youtube_streamer(youtubeUrl).pipe(res);
         res.set('Cache-Control', 'public, max-age=31557600');
     }catch(err) {
-        res.status(500).send("Failed to stream. " + err);
+        errorMsg = getErrorMessage("Failed to stream. " + err);
+        res.status(500).send(errorMsg);
     }
  });
 
