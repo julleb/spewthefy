@@ -4,7 +4,6 @@ import ServerApi from "./ServerApi";
 import {v4 as uuidv4} from "uuid";
 
 export function YoutubeSearcher({playListName, playList, setPlayList}) {
-  const API_KEY = "XX";
   const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/";
   const youtubeUrlBase = "https://www.youtube.com/watch?v=";
   const [videos, setVideos] = useState([]);
@@ -15,18 +14,22 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
       setVideos([]);
       return;
     }
-    YoutubeSearch({key: API_KEY, term: searchText}, (videos) => {
-      setVideos(
-        videos.map((video) => {
-          const videoId = video.id.videoId;
-          video.snippet.thumbnailUrl =
-            youtubeThumbNailUrlBase + videoId + "/3.jpg";
-          video.snippet.videoUrl = youtubeUrlBase + videoId;
-          video.uuid = uuidv4();
-          return video;
-        })
-      );
-    });
+
+    YoutubeSearch(
+      {key: process.env.REACT_APP_YOUTUBE_SEARCH_API_KEY, term: searchText},
+      (videos) => {
+        setVideos(
+          videos.map((video) => {
+            const videoId = video.id.videoId;
+            video.snippet.thumbnailUrl =
+              youtubeThumbNailUrlBase + videoId + "/3.jpg";
+            video.snippet.videoUrl = youtubeUrlBase + videoId;
+            video.uuid = uuidv4();
+            return video;
+          })
+        );
+      }
+    );
 
     //const videoOne = mockSearchResultItem("5abamRO41fE", "Slipknot - psychosocial");
     //const videoTwo = mockSearchResultItem("aCyGvGEtOwc", "Paramore - Misery Business");
@@ -81,11 +84,11 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
   return (
     <div>
       <input
+        className="mb-1"
         type="text"
         name="youtube-text"
         onChange={(event) => setQuery(event.target.value)}
       />
-      <br />
       <div>
         <h2>Search Result</h2>
         <div className="d-flex justify-content-center">

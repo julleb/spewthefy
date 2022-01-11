@@ -26,7 +26,7 @@ module.exports = {
     "plugin:prettier/recommended",
     "prettier",
   ],
-  plugins: ["react", "react-hooks", "prettier"],
+  plugins: ["react", "react-hooks", "prettier", "jsx"],
   rules: {
     "prettier/prettier": "warn",
     "no-console": ["warn", {allow: ["debug", "warn", "error"]}],
