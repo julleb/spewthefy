@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from "react";
 import ServerApi from "./ServerApi";
 import {v4 as uuidv4} from "uuid";
+import {useNavigate} from "react-router-dom";
 
 export function PlayLists({setCurrentPlayList}) {
   const [playLists, setPlayLists] = useState([]);
   const [createInput, setCreateInput] = useState();
+  const navigate = useNavigate();
 
   /*
     if(playLists.length === 0) {
