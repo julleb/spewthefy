@@ -19,9 +19,11 @@
   },
   "homepage": "https://github.com/julleb/spewthefy#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^11.0.0",
     "express": "^4.17.2",
+    "express-session": "^1.17.2",
     "youtube-audio-stream": "^0.3.41"
   }
 }

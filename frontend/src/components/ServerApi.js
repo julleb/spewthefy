@@ -58,5 +58,15 @@ const ServerApi = {
       },
     });
   },
+
+  login: function (username, password) {
+    return fetch(backendBaseUrl + "login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({username: username, password: password}),
+    });
+  },
 };
 export default ServerApi;
