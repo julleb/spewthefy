@@ -2,16 +2,31 @@ var express = require("express");
 var app = express();
 var fs = require("fs");
 const youtube_streamer = require("youtube-audio-stream");
-app.use(express.json());
+const cookieParser = require("cookie-parser");
+const sessions = require("express-session");
 var cors = require("cors");
-
 var playlistservice = require("./playlistservice");
+var loginservice = require("./loginservice");
+
 playlistservice.createPlayListDirectory();
+loginservice.init();
+app.use(express.json());
 
 function getErrorMessage(message) {
   errorMessage = { message: message };
   return JSON.stringify(errorMessage);
 }
+
+const oneDay = 1000 * 60 * 60 * 24;
+//session middleware
+app.use(
+  sessions({
+    secret: "XXX",
+    saveUninitialized: true,
+    cookie: { maxAge: oneDay },
+    resave: false,
+  })
+);
 
 function setJsonAsContentType(res) {
   res.setHeader("Content-Type", "application/json");
@@ -26,6 +41,41 @@ app.use(
 app.get("/", function (req, res) {
   console.log("Text: " + req.query.text);
   res.status(200).send("Hello!");
+});
+
+app.post("/user", async function (req, res) {
+  setJsonAsContentType(res);
+  user = req.body.user;
+  if (!user) {
+    errorMsg = getErrorMessage("No user object");
+    res.status(500).send(errorMsg);
+    return;
+  }
+  try {
+    await loginservice.createUser(user.username, user.password);
+    res.status(201).send("");
+  } catch (err) {
+    errorMsg = getErrorMessage(err.message);
+    res.status(500).send(errorMsg);
+    return;
+  }
+});
+
+app.post("/login", async function (req, res) {
+  username = req.body.username;
+  password = req.body.password;
+  try {
+    authenticated = await loginservice.authenticateUser(username, password);
+    if (!authenticated) {
+      throw Error("Not ok");
+    }
+
+    res.status(200).send("");
+  } catch (err) {
+    errorMsg = getErrorMessage(err.message);
+    res.status(500).send(errorMsg);
+    return;
+  }
 });
 
 app.post("/playlist", async function (req, res) {

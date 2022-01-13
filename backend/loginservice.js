@@ -4,13 +4,13 @@ var fs = require("fs");
 const usersFile = "users";
 
 async function checkIfFileExists() {
-  if (fs.existsSync(usersFile)) {
+  if (!fs.existsSync(usersFile)) {
     throw Error("UsersFile not exist");
   }
 }
 
 async function readUsers() {
-  data = fs.readFileSync(users);
+  data = fs.readFileSync(usersFile);
   users = JSON.parse(data);
   return users;
 }
@@ -42,12 +42,8 @@ module.exports = {
   getUser: async function (username) {
     await checkIfFileExists();
     users = await readUsers();
-    users.foreach((user) => {
-      if (username === user.username) {
-        return user;
-      }
-    });
-    return undefined;
+    const user = users.find((x) => username === x.username);
+    return user;
   },
 
   authenticateUser: async function (username, password) {
