@@ -7,6 +7,7 @@ const sessions = require("express-session");
 var cors = require("cors");
 var playlistservice = require("./playlistservice");
 var loginservice = require("./loginservice");
+const session = require("express-session");
 
 playlistservice.createPlayListDirectory();
 loginservice.init();
@@ -40,7 +41,9 @@ app.use(
 
 app.get("/", function (req, res) {
   console.log("Text: " + req.query.text);
-  res.status(200).send("Hello!");
+  var name = req.session.name;
+  if (!name) name = "unknown";
+  res.status(200).send("Hello " + name);
 });
 
 app.post("/user", async function (req, res) {
@@ -69,7 +72,7 @@ app.post("/login", async function (req, res) {
     if (!authenticated) {
       throw Error("Not ok");
     }
-
+    req.session.username = username;
     res.status(200).send("");
   } catch (err) {
     errorMsg = getErrorMessage(err.message);
