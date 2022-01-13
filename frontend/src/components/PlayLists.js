@@ -3,7 +3,7 @@ import ServerApi from "./ServerApi";
 import {v4 as uuidv4} from "uuid";
 import {useNavigate} from "react-router-dom";
 
-export function PlayLists({setCurrentPlayList}) {
+export function PlayLists() {
   const [playLists, setPlayLists] = useState([]);
   const [createInput, setCreateInput] = useState();
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export function PlayLists({setCurrentPlayList}) {
         {playLists.map((playList) => (
           <li key={uuidv4()}>
             <div>
-              <button onClick={() => setCurrentPlayList(playList)}>
+              <button onClick={() => navigate(`../playlist/${playList}`)}>
                 {playList}
               </button>
             </div>

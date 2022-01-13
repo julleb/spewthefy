@@ -14,6 +14,7 @@ module.exports = {
     },
     ecmaVersion: 11,
     sourceType: "module",
+    requireConfigFile: false,
   },
   settings: {
     react: {

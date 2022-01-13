@@ -3,10 +3,14 @@ import {AudioPlayer} from "./AudioPlayer";
 import {YoutubeSearcher} from "./YoutubeSearcher";
 import {MediaSession} from "./MediaSession";
 import ServerApi from "./ServerApi";
+import {useParams} from "react-router-dom";
 
-export function PlayList({playListName}) {
+export function PlayList() {
+  const {playlistName} = useParams();
   const [playList, setPlayList] = useState();
   const [currentTrack, setCurrentTrack] = useState();
+
+  console.log("test");
 
   useEffect(() => {
     //init playList
@@ -44,22 +48,22 @@ export function PlayList({playListName}) {
   }
 
   function removeTrack(track) {
-    ServerApi.removeFromPlayList(playListName, track.uuid).then((response) => {
+    ServerApi.removeFromPlayList(playlistName, track.uuid).then((response) => {
       if (response.ok) {
         getPlayList();
       } else {
-        console.error("Failed to get playlistName " + playListName);
+        console.error("Failed to get playlistName " + playlistName);
       }
     });
   }
 
   function getPlayList() {
-    ServerApi.getPlayList(playListName)
+    ServerApi.getPlayList(playlistName)
       .then((response) => {
         if (response.ok) {
           return response.json();
         } else {
-          console.error("Failed to get playlistName " + playListName);
+          console.error("Failed to get playlistName " + playlistName);
           setPlayList([]);
         }
       })
@@ -71,12 +75,11 @@ export function PlayList({playListName}) {
   return (
     <div className="playlist">
       <YoutubeSearcher
-        playListName={playListName}
+        playListName={playlistName}
         playList={playList}
         setPlayList={setPlayList}
       />
-      <h2>PlayList: {playListName}</h2>
-
+      <h2>PlayList: {playlistName}</h2>
       <div className="d-flex justify-content-center">
         <ul className="list-group">
           {playList?.map((track) => (
