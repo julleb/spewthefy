@@ -4,13 +4,13 @@ import {YoutubeSearcher} from "./YoutubeSearcher";
 import {MediaSession} from "./MediaSession";
 import ServerApi from "./ServerApi";
 import {useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 export function PlayList() {
   const {playlistName} = useParams();
   const [playList, setPlayList] = useState();
   const [currentTrack, setCurrentTrack] = useState();
-
-  console.log("test");
+  const navigate = useNavigate();
 
   useEffect(() => {
     //init playList
@@ -52,7 +52,11 @@ export function PlayList() {
       if (response.ok) {
         getPlayList();
       } else {
-        console.error("Failed to get playlistName " + playlistName);
+        if (response.status == 401) {
+          navigate(`/`);
+        } else {
+          console.error("Failed to get playlistName " + playlistName);
+        }
       }
     });
   }
@@ -63,8 +67,12 @@ export function PlayList() {
         if (response.ok) {
           return response.json();
         } else {
-          console.error("Failed to get playlistName " + playlistName);
-          setPlayList([]);
+          if (response.status == 401) {
+            navigate(`/`);
+          } else {
+            console.error("Failed to get playlistName " + playlistName);
+            setPlayList([]);
+          }
         }
       })
       .then((data) => {
