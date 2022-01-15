@@ -41,7 +41,6 @@ function applicationJson(req, res, next) {
 function requireAuthentication(req, res, next) {
   const user = loginservice.getUserFromSession(req);
   if (!user) {
-    res.setHeader("Content-Type", "application/json");
     return res.status(401).send(getErrorMessage("not authenticated"));
   }
   return next();
@@ -95,88 +94,116 @@ app.post("/login", applicationJson, async function (req, res) {
   }
 });
 
-app.post("/playlist", applicationJson, async function (req, res) {
-  var playlist = req.body.name;
-  if (!playlist) {
-    errorMsg = getErrorMessage("No name given");
-    res.status(500).send(errorMsg);
-    return;
-  }
-  try {
-    await playlistservice.createPlaylist(playlist);
-    res.status(200).send("");
-  } catch (e) {
-    errorMsg = getErrorMessage(e.message);
-    res.status(500).send(errorMsg);
-  }
-});
-
-app.get("/playlist", applicationJson, async function (req, res) {
-  playLists = await playlistservice.getPlaylists();
-  setJsonAsContentType(res);
-  res.status(200).send(JSON.stringify(playLists));
-});
-
-app.put("/playlist/:name", applicationJson, async function (req, res) {
-  track = req.body.track;
-  playlistName = req.params.name;
-  if (!track) {
-    errorMsg = getErrorMessage("no track object sent");
-    res.status(500).send(errorMsg);
-    return;
-  }
-  await playlistservice.updatePlaylistWithTrack(playlistName, track);
-  res.status(204).send("");
-});
-
-app.delete("/playlist/:name", applicationJson, async function (req, res) {
-  setJsonAsContentType(res);
-  playlistName = req.params.name;
-  uuid = req.query.uuid;
-  if (!playlistName || !uuid) {
-    errorMsg = getErrorMessage("bad input");
-    res.status(500).send(errorMsg);
-    return;
-  }
-  try {
-    removed = await playlistservice.deleteTrackFromPlayList(playlistName, uuid);
-    if (removed) {
-      res.status(201).send("");
-    } else {
-      errorMsg = getErrorMessage("failed to remove");
+app.post(
+  "/playlist",
+  applicationJson,
+  requireAuthentication,
+  async function (req, res) {
+    var playlist = req.body.name;
+    if (!playlist) {
+      errorMsg = getErrorMessage("No name given");
+      res.status(500).send(errorMsg);
+      return;
+    }
+    try {
+      await playlistservice.createPlaylist(playlist);
+      res.status(200).send("");
+    } catch (e) {
+      errorMsg = getErrorMessage(e.message);
       res.status(500).send(errorMsg);
     }
-  } catch (e) {
-    if (
-      e.message === playlistservice.TRACK_NOT_FOUND ||
-      e.message === playlistservice.PLAYLIST_NOT_FOUND
-    ) {
-      res.status(404);
-    } else {
-      res.status(500);
-    }
-    errorMsg = getErrorMessage(e.message);
-    res.send(errorMsg);
   }
-});
+);
 
-app.get("/playlist/:name", applicationJson, async function (req, res) {
-  setJsonAsContentType(res);
-  playlistName = req.params.name;
-  try {
-    const json = await playlistservice.getPlaylist(playlistName);
-    res.status(200).send(json);
-  } catch (e) {
-    if (e.message === playlistservice.PLAYLIST_NOT_FOUND) {
+app.get(
+  "/playlist",
+  applicationJson,
+  requireAuthentication,
+  async function (req, res) {
+    playLists = await playlistservice.getPlaylists();
+    setJsonAsContentType(res);
+    res.status(200).send(JSON.stringify(playLists));
+  }
+);
+
+app.put(
+  "/playlist/:name",
+  applicationJson,
+  requireAuthentication,
+  async function (req, res) {
+    track = req.body.track;
+    playlistName = req.params.name;
+    if (!track) {
+      errorMsg = getErrorMessage("no track object sent");
+      res.status(500).send(errorMsg);
+      return;
+    }
+    await playlistservice.updatePlaylistWithTrack(playlistName, track);
+    res.status(204).send("");
+  }
+);
+
+app.delete(
+  "/playlist/:name",
+  applicationJson,
+  requireAuthentication,
+  async function (req, res) {
+    setJsonAsContentType(res);
+    playlistName = req.params.name;
+    uuid = req.query.uuid;
+    if (!playlistName || !uuid) {
+      errorMsg = getErrorMessage("bad input");
+      res.status(500).send(errorMsg);
+      return;
+    }
+    try {
+      removed = await playlistservice.deleteTrackFromPlayList(
+        playlistName,
+        uuid
+      );
+      if (removed) {
+        res.status(201).send("");
+      } else {
+        errorMsg = getErrorMessage("failed to remove");
+        res.status(500).send(errorMsg);
+      }
+    } catch (e) {
+      if (
+        e.message === playlistservice.TRACK_NOT_FOUND ||
+        e.message === playlistservice.PLAYLIST_NOT_FOUND
+      ) {
+        res.status(404);
+      } else {
+        res.status(500);
+      }
       errorMsg = getErrorMessage(e.message);
-      res.status(404).send(errorMsg);
-    } else {
-      res.status(500).send(getErrorMessage("failed"));
+      res.send(errorMsg);
     }
   }
-});
+);
 
-app.get("/audio", applicationJson, function (req, res) {
+app.get(
+  "/playlist/:name",
+  applicationJson,
+  requireAuthentication,
+  async function (req, res) {
+    setJsonAsContentType(res);
+    playlistName = req.params.name;
+    try {
+      const json = await playlistservice.getPlaylist(playlistName);
+      res.status(200).send(json);
+    } catch (e) {
+      if (e.message === playlistservice.PLAYLIST_NOT_FOUND) {
+        errorMsg = getErrorMessage(e.message);
+        res.status(404).send(errorMsg);
+      } else {
+        res.status(500).send(getErrorMessage("failed"));
+      }
+    }
+  }
+);
+
+app.get("/audio", applicationJson, requireAuthentication, function (req, res) {
   youtubeUrl = req.query.url;
   if (!youtubeUrl) {
     res.status(201).send(getErrorMessage("no url as query param"));
