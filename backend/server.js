@@ -106,6 +106,8 @@ app.post(
       return;
     }
     try {
+      username = loginservice.getUserFromSession(req);
+      playlist = username + "_" + playlist;
       await playlistservice.createPlaylist(playlist);
       res.status(200).send("");
     } catch (e) {
@@ -120,8 +122,8 @@ app.get(
   applicationJson,
   requireAuthentication,
   async function (req, res) {
-    playLists = await playlistservice.getPlaylists();
-    setJsonAsContentType(res);
+    username = loginservice.getUserFromSession(req);
+    playLists = await playlistservice.getPlayListsOfUser(username);
     res.status(200).send(JSON.stringify(playLists));
   }
 );
@@ -132,7 +134,8 @@ app.put(
   requireAuthentication,
   async function (req, res) {
     track = req.body.track;
-    playlistName = req.params.name;
+    username = loginservice.getUserFromSession(req);
+    playlistName = username + "_" + req.params.name;
     if (!track) {
       errorMsg = getErrorMessage("no track object sent");
       res.status(500).send(errorMsg);
@@ -149,7 +152,8 @@ app.delete(
   requireAuthentication,
   async function (req, res) {
     setJsonAsContentType(res);
-    playlistName = req.params.name;
+    username = loginservice.getUserFromSession(req);
+    playlistName = username + "_" + req.params.name;
     uuid = req.query.uuid;
     if (!playlistName || !uuid) {
       errorMsg = getErrorMessage("bad input");
@@ -190,6 +194,8 @@ app.get(
     setJsonAsContentType(res);
     playlistName = req.params.name;
     try {
+      username = loginservice.getUserFromSession(req);
+      playlistName = username + "_" + req.params.name;
       const json = await playlistservice.getPlaylist(playlistName);
       res.status(200).send(json);
     } catch (e) {
@@ -203,7 +209,7 @@ app.get(
   }
 );
 
-app.get("/audio", applicationJson, requireAuthentication, function (req, res) {
+app.get("/audio", applicationJson, function (req, res) {
   youtubeUrl = req.query.url;
   if (!youtubeUrl) {
     res.status(201).send(getErrorMessage("no url as query param"));

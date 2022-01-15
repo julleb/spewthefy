@@ -2,7 +2,7 @@ var express = require("express");
 var fs = require("fs");
 
 var playlistDirectory = "playlists/";
-var playlistNameRegex = /^[A-Za-z0-9]+$/;
+var playlistNameRegex = /^[A-Za-z0-9_]+$/;
 
 module.exports = {
   PLAYLIST_NOT_FOUND: "playlist not found",
@@ -23,7 +23,19 @@ module.exports = {
     fs.readdirSync(playlistDirectory).forEach((file) => {
       playLists.push(file);
     });
+
     return playLists;
+  },
+
+  getPlayListsOfUser: async function (username) {
+    playLists = await this.getPlaylists();
+    return playLists
+      .filter(function (playList) {
+        return playList.startsWith(username + "_");
+      })
+      .map((playList) => {
+        return playList.split("_")[1];
+      });
   },
 
   createPlaylist: async function (name) {
