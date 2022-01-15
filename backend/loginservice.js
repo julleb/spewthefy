@@ -55,4 +55,8 @@ module.exports = {
     }
     return false;
   },
+
+  getUserFromSession: function (req) {
+    return req.session.username;
+  },
 };

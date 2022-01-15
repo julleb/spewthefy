@@ -7,6 +7,7 @@ const ServerApi = {
   createPlayList: function (playListName) {
     return fetch(playListEndpoint, {
       method: "post",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -23,6 +24,7 @@ const ServerApi = {
   addTrackToPlayList: function (playListName, track) {
     return fetch(playListEndpoint + "/" + playListName, {
       method: "put",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -35,6 +37,7 @@ const ServerApi = {
   getPlayList: function (playListName) {
     return fetch(playListEndpoint + "/" + playListName, {
       method: "get",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -44,6 +47,7 @@ const ServerApi = {
   getPlayLists: function () {
     return fetch(playListEndpoint, {
       method: "get",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -53,6 +57,7 @@ const ServerApi = {
   removeFromPlayList: function (playListName, uuid) {
     return fetch(playListEndpoint + "/" + playListName + "?uuid=" + uuid, {
       method: "delete",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -62,6 +67,7 @@ const ServerApi = {
   login: function (username, password) {
     return fetch(backendBaseUrl + "login", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

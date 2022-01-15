@@ -22,9 +22,9 @@ const oneDay = 1000 * 60 * 60 * 24;
 //session middleware
 app.use(
   sessions({
-    secret: "XXX",
+    secret: "YYYYYYYYYYYYYY",
     saveUninitialized: true,
-    cookie: { maxAge: oneDay },
+    cookie: { maxAge: oneDay, httpOnly: false, secure: false }, //should be httpsecure in prodenv
     resave: false,
   })
 );
@@ -33,16 +33,30 @@ function setJsonAsContentType(res) {
   res.setHeader("Content-Type", "application/json");
 }
 
+function applicationJson(req, res, next) {
+  res.setHeader("Content-Type", "application/json");
+  return next();
+}
+
+function requireAuthentication(req, res, next) {
+  const user = loginservice.getUserFromSession(req);
+  if (!user) {
+    res.setHeader("Content-Type", "application/json");
+    return res.status(401).send(getErrorMessage("not authenticated"));
+  }
+  return next();
+}
+
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
 app.get("/", function (req, res) {
-  console.log("Text: " + req.query.text);
-  var name = req.session.name;
-  if (!name) name = "unknown";
+  var name = req.session.username;
+  if (!name) name = "unknown-user";
   res.status(200).send("Hello " + name);
 });
 
@@ -64,7 +78,7 @@ app.post("/user", async function (req, res) {
   }
 });
 
-app.post("/login", async function (req, res) {
+app.post("/login", applicationJson, async function (req, res) {
   username = req.body.username;
   password = req.body.password;
   try {
@@ -73,7 +87,7 @@ app.post("/login", async function (req, res) {
       throw Error("Not ok");
     }
     req.session.username = username;
-    res.status(200).send("");
+    return res.status(201).send("");
   } catch (err) {
     errorMsg = getErrorMessage(err.message);
     res.status(500).send(errorMsg);
@@ -81,8 +95,7 @@ app.post("/login", async function (req, res) {
   }
 });
 
-app.post("/playlist", async function (req, res) {
-  setJsonAsContentType(res);
+app.post("/playlist", applicationJson, async function (req, res) {
   var playlist = req.body.name;
   if (!playlist) {
     errorMsg = getErrorMessage("No name given");
@@ -98,13 +111,13 @@ app.post("/playlist", async function (req, res) {
   }
 });
 
-app.get("/playlist", async function (req, res) {
+app.get("/playlist", applicationJson, async function (req, res) {
   playLists = await playlistservice.getPlaylists();
   setJsonAsContentType(res);
   res.status(200).send(JSON.stringify(playLists));
 });
 
-app.put("/playlist/:name", async function (req, res) {
+app.put("/playlist/:name", applicationJson, async function (req, res) {
   track = req.body.track;
   playlistName = req.params.name;
   if (!track) {
@@ -116,7 +129,7 @@ app.put("/playlist/:name", async function (req, res) {
   res.status(204).send("");
 });
 
-app.delete("/playlist/:name", async function (req, res) {
+app.delete("/playlist/:name", applicationJson, async function (req, res) {
   setJsonAsContentType(res);
   playlistName = req.params.name;
   uuid = req.query.uuid;
@@ -147,7 +160,7 @@ app.delete("/playlist/:name", async function (req, res) {
   }
 });
 
-app.get("/playlist/:name", async function (req, res) {
+app.get("/playlist/:name", applicationJson, async function (req, res) {
   setJsonAsContentType(res);
   playlistName = req.params.name;
   try {
@@ -163,8 +176,7 @@ app.get("/playlist/:name", async function (req, res) {
   }
 });
 
-app.get("/audio", function (req, res) {
-  setJsonAsContentType(res);
+app.get("/audio", applicationJson, function (req, res) {
   youtubeUrl = req.query.url;
   if (!youtubeUrl) {
     res.status(201).send(getErrorMessage("no url as query param"));
