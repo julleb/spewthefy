@@ -3,10 +3,9 @@ import ServerApi from "./ServerApi";
 import React from "react";
 
 export function AudioPlayer({track, nextTrack}) {
-  let trackUrl = "";
-  if (track) {
-    trackUrl = track.youtubeUrl;
-  }
+  if (!track) return <div></div>;
+
+  let trackUrl = track.youtubeUrl;
   const backendUrl = ServerApi.getAudioUrl(trackUrl);
 
   return (
