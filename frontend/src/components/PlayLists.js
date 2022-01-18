@@ -25,7 +25,7 @@ export function PlayLists() {
         if (response.ok) {
           return response.json();
         } else {
-          if (response.status == 401) {
+          if (response.status === 401) {
             navigate(`/`);
           } else {
             console.error("Failed to get playlists");
@@ -43,7 +43,7 @@ export function PlayLists() {
       if (response.ok) {
         setPlayLists([...playLists, playListName]);
       } else {
-        if (response.status == 401) {
+        if (response.status === 401) {
           navigate(`/`);
         } else {
           console.error("Failed to create Playlist " + playListName);

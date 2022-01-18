@@ -24,7 +24,6 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
             video.snippet.thumbnailUrl =
               youtubeThumbNailUrlBase + videoId + "/3.jpg";
             video.snippet.videoUrl = youtubeUrlBase + videoId;
-            video.uuid = uuidv4();
             return video;
           })
         );
@@ -61,7 +60,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
 
   async function addToPlayList(video) {
     const track = {
-      uuid: video.uuid,
+      uuid: uuidv4(),
       youtubeUrl: video.snippet.videoUrl,
       title: video.snippet.title,
       thumbNail: video.snippet.thumbnailUrl,

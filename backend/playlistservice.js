@@ -77,7 +77,7 @@ module.exports = {
   },
 
   deleteTrackFromPlayList: async function (playlistName, uuid) {
-    if (!playlistNameRegex.test(nplaylistNameame)) {
+    if (!playlistNameRegex.test(playlistName)) {
       throw Error(this.PLAYLIST_NOT_FOUND);
     }
     var pathToPlayList = this.getPlayListPath(playlistName);

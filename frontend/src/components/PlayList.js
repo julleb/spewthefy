@@ -5,6 +5,12 @@ import {MediaSession} from "./MediaSession";
 import ServerApi from "./ServerApi";
 import {useParams} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+  faAirFreshener,
+  faCoffee,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function PlayList() {
   const {playlistName} = useParams();
@@ -52,7 +58,7 @@ export function PlayList() {
       if (response.ok) {
         getPlayList();
       } else {
-        if (response.status == 401) {
+        if (response.status === 401) {
           navigate(`/`);
         } else {
           console.error("Failed to get playlistName " + playlistName);
@@ -67,7 +73,7 @@ export function PlayList() {
         if (response.ok) {
           return response.json();
         } else {
-          if (response.status == 401) {
+          if (response.status === 401) {
             navigate(`/`);
           } else {
             console.error("Failed to get playlistName " + playlistName);
@@ -96,30 +102,51 @@ export function PlayList() {
               onClick={() => playTrack(track)}
               className={`${
                 currentTrack?.youtubeUrl === track.youtubeUrl ? "active" : ""
-              } list-group-item`}
+              } list-group-item list-group-item-action list-group-item-dark`}
             >
-              {track.title}
-              <div className="d-flex justify-content-end">
-                <button
-                  className="btn"
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                  <div>
+                    <img
+                      style={{width: 50}}
+                      src={track.thumbNail}
+                      alt="alternative?"
+                    />
+                  </div>
+                  <div style={{marginLeft: 5}}>{track.title}</div>
+                </div>
+                <FontAwesomeIcon
+                  style={{cursor: "pointer"}}
+                  icon={faTrashAlt}
                   onClick={(event) => {
                     event.stopPropagation();
                     removeTrack(track);
                   }}
-                >
-                  <i className="bi bi-trash"></i>
-                </button>
+                />
               </div>
             </li>
           ))}
         </ul>
       </div>
-      <AudioPlayer track={currentTrack} nextTrack={nextTrack} />
+      <Footer track={currentTrack} nextTrack={nextTrack} />
       <MediaSession
         track={currentTrack}
         nextTrackFunction={nextTrack}
         previousTrackFunction={previousTrack}
       />
     </div>
+  );
+}
+
+function Footer({currentTrack, nextTrack}) {
+  return (
+    <footer
+      className="bg-light text-center text-lg-start"
+      style={{position: "fixed", bottom: 0, width: "100%", zIndex: 10}}
+    >
+      <div className="text-center p-3" style={{backgroundColor: "black"}}>
+        <AudioPlayer track={currentTrack} nextTrack={nextTrack} />
+      </div>
+    </footer>
   );
 }
