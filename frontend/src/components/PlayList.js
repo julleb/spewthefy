@@ -8,7 +8,11 @@ import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   faAirFreshener,
+  faBookmark,
   faCoffee,
+  faHome,
+  faSearchLocation,
+  faSearchPlus,
   faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -144,8 +148,36 @@ function Footer({currentTrack, nextTrack}) {
       className="bg-light text-center text-lg-start"
       style={{position: "fixed", bottom: 0, width: "100%", zIndex: 10}}
     >
-      <div className="text-center p-3" style={{backgroundColor: "black"}}>
+      <div className="text-center p-3 bg-secondary">
         <AudioPlayer track={currentTrack} nextTrack={nextTrack} />
+      </div>
+      <div className="text-center p-3 bg-secondary">
+        <div className="d-flex justify-content-between">
+          <FontAwesomeIcon
+            className="fa-2x"
+            style={{cursor: "pointer"}}
+            icon={faHome}
+            onClick={(event) => {
+              console.log("Home");
+            }}
+          />
+          <FontAwesomeIcon
+            className="fa-2x"
+            style={{cursor: "pointer"}}
+            icon={faSearchPlus}
+            onClick={(event) => {
+              console.log("Sök");
+            }}
+          />
+          <FontAwesomeIcon
+            className="fa-2x"
+            style={{cursor: "pointer"}}
+            icon={faBookmark}
+            onClick={(event) => {
+              console.log("Playlists");
+            }}
+          />
+        </div>
       </div>
     </footer>
   );
