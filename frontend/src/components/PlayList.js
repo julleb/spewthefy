@@ -143,6 +143,8 @@ export function PlayList() {
 }
 
 function Footer({currentTrack, nextTrack}) {
+  const navigate = useNavigate();
+
   return (
     <footer
       className="bg-light text-center text-lg-start"
@@ -159,23 +161,20 @@ function Footer({currentTrack, nextTrack}) {
             icon={faHome}
             onClick={(event) => {
               console.log("Home");
+              navigate(`/playlists`);
             }}
           />
           <FontAwesomeIcon
             className="fa-2x"
             style={{cursor: "pointer"}}
             icon={faSearchPlus}
-            onClick={(event) => {
-              console.log("Sök");
-            }}
+            onClick={(event) => {}}
           />
           <FontAwesomeIcon
             className="fa-2x"
             style={{cursor: "pointer"}}
             icon={faBookmark}
-            onClick={(event) => {
-              console.log("Playlists");
-            }}
+            onClick={(event) => {}}
           />
         </div>
       </div>
