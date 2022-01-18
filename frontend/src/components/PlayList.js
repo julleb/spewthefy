@@ -128,7 +128,7 @@ export function PlayList() {
           ))}
         </ul>
       </div>
-      <Footer track={currentTrack} nextTrack={nextTrack} />
+      <Footer currentTrack={currentTrack} nextTrack={nextTrack} />
       <MediaSession
         track={currentTrack}
         nextTrackFunction={nextTrack}
