@@ -2,8 +2,10 @@ import YoutubeSearch from "youtube-api-search";
 import React, {useState, useEffect} from "react";
 import ServerApi from "./ServerApi";
 import {v4 as uuidv4} from "uuid";
+import {useCurrentPlaylist} from "../hooks/useCurrentPlaylist";
 
-export function YoutubeSearcher({playListName, playList, setPlayList}) {
+export function YoutubeSearcher({playListName, playList}) {
+  const {setCurrentPlaylist} = useCurrentPlaylist();
   const youtubeThumbNailUrlBase = "https://img.youtube.com/vi/";
   const youtubeUrlBase = "https://www.youtube.com/watch?v=";
   const [videos, setVideos] = useState([]);
@@ -67,7 +69,7 @@ export function YoutubeSearcher({playListName, playList, setPlayList}) {
     };
     await ServerApi.addTrackToPlayList(playListName, track).then((response) => {
       if (response.ok) {
-        setPlayList([...playList, track]);
+        setCurrentPlaylist([...playList, track]);
       } else {
         console.error("Failed to add track to playlist " + track.title);
       }

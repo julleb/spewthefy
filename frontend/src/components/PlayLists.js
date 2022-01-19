@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import ServerApi from "./ServerApi";
 import {v4 as uuidv4} from "uuid";
 import {useNavigate} from "react-router-dom";
+import {Footer} from "./Footer";
 
 export function PlayLists() {
   const [playLists, setPlayLists] = useState([]);
@@ -53,7 +54,7 @@ export function PlayLists() {
   }
 
   return (
-    <div className="playlists">
+    <div>
       <h2>Create PlayList</h2>
       <input
         type="text"

@@ -1,11 +1,13 @@
 import ReactAudioPlayer from "react-audio-player";
 import ServerApi from "./ServerApi";
 import React from "react";
+import {useCurrentPlaylist} from "../hooks/useCurrentPlaylist";
 
-export function AudioPlayer({track, nextTrack}) {
-  if (!track) return <div></div>;
+export function AudioPlayer() {
+  const {currentTrack: track, nextTrack} = useCurrentPlaylist();
+  if (!track) return null;
 
-  let trackUrl = track.youtubeUrl;
+  const trackUrl = track.youtubeUrl;
   const backendUrl = ServerApi.getAudioUrl(trackUrl);
 
   return (

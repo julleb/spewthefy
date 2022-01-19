@@ -1,25 +1,19 @@
-import React, {useState, useEffect} from "react";
-import {AudioPlayer} from "./AudioPlayer";
+import React, {useEffect} from "react";
 import {YoutubeSearcher} from "./YoutubeSearcher";
 import {MediaSession} from "./MediaSession";
 import ServerApi from "./ServerApi";
 import {useParams} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-  faAirFreshener,
-  faBookmark,
-  faCoffee,
-  faHome,
-  faSearchLocation,
-  faSearchPlus,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {Footer} from "./Footer";
+import {useCurrentPlaylist} from "../hooks/useCurrentPlaylist";
 
 export function PlayList() {
   const {playlistName} = useParams();
-  const [playList, setPlayList] = useState();
-  const [currentTrack, setCurrentTrack] = useState();
+  const {currentPlaylist: playList, setCurrentPlaylist: setPlayList} =
+    useCurrentPlaylist();
+  const {currentTrack, setCurrentTrack, nextTrack} = useCurrentPlaylist();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,18 +22,6 @@ export function PlayList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function nextTrack() {
-    if (!currentTrack) return;
-    for (let i = 0; i < playList.length; i++) {
-      if (playList[i] === currentTrack) {
-        let nextSongIndex = i + 1;
-        if (nextSongIndex === playList.length) {
-          nextSongIndex = 0;
-        }
-        setCurrentTrack(playList[nextSongIndex]);
-      }
-    }
-  }
   function previousTrack() {
     if (!currentTrack) return;
     for (let i = 0; i < playList.length; i++) {
@@ -92,11 +74,7 @@ export function PlayList() {
 
   return (
     <div className="playlist">
-      <YoutubeSearcher
-        playListName={playlistName}
-        playList={playList}
-        setPlayList={setPlayList}
-      />
+      <YoutubeSearcher playListName={playlistName} playList={playList} />
       <h2>PlayList: {playlistName}</h2>
       <div className="d-flex justify-content-center">
         <ul className="list-group">
@@ -105,7 +83,7 @@ export function PlayList() {
               key={track.uuid}
               onClick={() => playTrack(track)}
               className={`${
-                currentTrack?.youtubeUrl === track.youtubeUrl ? "active" : ""
+                currentTrack?.uuid === track.uuid ? "active" : ""
               } list-group-item list-group-item-action list-group-item-dark`}
             >
               <div className="d-flex justify-content-between align-items-center">
@@ -132,52 +110,10 @@ export function PlayList() {
           ))}
         </ul>
       </div>
-      <Footer currentTrack={currentTrack} nextTrack={nextTrack} />
       <MediaSession
-        track={currentTrack}
         nextTrackFunction={nextTrack}
         previousTrackFunction={previousTrack}
       />
     </div>
-  );
-}
-
-function Footer({currentTrack, nextTrack}) {
-  const navigate = useNavigate();
-
-  return (
-    <footer
-      className="bg-light text-center text-lg-start"
-      style={{position: "fixed", bottom: 0, width: "100%", zIndex: 10}}
-    >
-      <div className="text-center p-3 bg-secondary">
-        <AudioPlayer track={currentTrack} nextTrack={nextTrack} />
-      </div>
-      <div className="text-center p-3 bg-secondary">
-        <div className="d-flex justify-content-between">
-          <FontAwesomeIcon
-            className="fa-2x"
-            style={{cursor: "pointer"}}
-            icon={faHome}
-            onClick={(event) => {
-              console.log("Home");
-              navigate(`/playlists`);
-            }}
-          />
-          <FontAwesomeIcon
-            className="fa-2x"
-            style={{cursor: "pointer"}}
-            icon={faSearchPlus}
-            onClick={(event) => {}}
-          />
-          <FontAwesomeIcon
-            className="fa-2x"
-            style={{cursor: "pointer"}}
-            icon={faBookmark}
-            onClick={(event) => {}}
-          />
-        </div>
-      </div>
-    </footer>
   );
 }

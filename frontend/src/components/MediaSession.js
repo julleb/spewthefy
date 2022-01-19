@@ -1,10 +1,8 @@
 import React, {useEffect} from "react";
+import {useCurrentPlaylist} from "../hooks/useCurrentPlaylist";
 
-export function MediaSession({
-  track,
-  nextTrackFunction,
-  previousTrackFunction,
-}) {
+export function MediaSession({nextTrackFunction, previousTrackFunction}) {
+  const {currentTrack: track} = useCurrentPlaylist();
   useEffect(() => {
     if ("mediaSession" in navigator && track) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
